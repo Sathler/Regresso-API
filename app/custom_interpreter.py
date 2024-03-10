@@ -8,12 +8,23 @@ def custom_interpreter(expression: str):
     }
 
     equivalent_expr = {
+        'log': 'np.log',
         'log2': 'np.log2',
         'log10': 'np.log10',
-        'log2': 'np.log',
         '_e': 'math.e',
         '_pi': 'math.pi',
+        'exp': 'np.exp',
+        'sin': 'np.sin',
+        'sen': 'np.sin',
+        'cos': 'np.cos',
+        'tan': 'np.tan',
+        'sqrt': 'np.sqrt',
+        'abs': 'np.abs',
+        'floor': 'np.floor',
+        'ceil': 'np.ceil',
     }
+
+    reserved_words = set(equivalent_expr.keys())
 
     words = re.findall(r'\b\_?[a-zA-Z]+\d*\b', expression)
 
@@ -29,8 +40,9 @@ def custom_interpreter(expression: str):
     
     free_variables = [x for x in words if len(x) == 1 and x != 'x']
 
-    for key, value in equivalent_expr.items():
-        expression = expression.replace(key, value)
+    for word in words:
+        if word in equivalent_expr:
+            expression = expression.replace(word, equivalent_expr[word])
 
     return f"""
 def my_custom_function(x{',' + ','.join(free_variables)}):

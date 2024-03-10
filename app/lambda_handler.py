@@ -53,7 +53,6 @@ def regression_handler(event, context):
         }
 
     except Exception as error:
-        raise error
         print("Erro no processamento")
         print(str(error))
         return {
