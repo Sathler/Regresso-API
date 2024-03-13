@@ -2,6 +2,7 @@ from scipy.optimize import curve_fit
 import numpy as np
 from app.custom_interpreter import custom_interpreter, create_function
 import re
+import inspect
 
 class Regression():
     def __init__(self, type = None) -> None:
@@ -52,6 +53,50 @@ class Regression():
             'custom': lambda x: x,
         }
 
+        unbounded_2 = ([-np.inf, -np.inf], [np.inf, np.inf])
+        unbounded_6 = ([-np.inf, -np.inf, -np.inf, -np.inf, -np.inf, -np.inf], [np.inf, np.inf, np.inf, np.inf, np.inf, np.inf])
+
+        bounds = {
+            'linear': [
+                ([0.01, -np.inf], [np.inf, np.inf]),
+                ([-np.inf, -np.inf], [-0.01, np.inf]),
+            ],
+            'quadratic': [
+                ([0.01, -np.inf, -np.inf], [np.inf, np.inf, np.inf]),
+                ([-np.inf, -np.inf, -np.inf], [-0.01, np.inf, np.inf])
+            ],
+            'cubic': [
+                ([0.01, -np.inf, -np.inf, -np.inf], [np.inf, np.inf, np.inf, np.inf]),
+                ([-np.inf, -np.inf, -np.inf, -np.inf], [-0.01, np.inf, np.inf, np.inf])
+            ],
+            'exp': [
+                unbounded_2
+            ],
+            'logaritmic': [
+                ([0.01, -np.inf], [np.inf, np.inf]),
+                ([-np.inf, -np.inf], [-0.01, np.inf]),
+            ],
+            'n_logaritmic': [
+                ([0.01, -np.inf], [np.inf, np.inf]),
+                ([-np.inf, -np.inf], [-0.01, np.inf]),
+            ],
+            'n2_logaritmic': [
+                ([0.01, -np.inf], [np.inf, np.inf]),
+                ([-np.inf, -np.inf], [-0.01, np.inf]),
+            ],
+            'n_logaritmic2': [
+                ([0.01, -np.inf], [np.inf, np.inf]),
+                ([-np.inf, -np.inf], [-0.01, np.inf]),
+            ],
+            'ema': [
+                unbounded_6
+            ],
+            'power': [
+                ([-np.inf, 1.1], [np.inf, np.inf]),
+                ([-np.inf, -np.inf], [np.inf, 0.9]),
+            ],
+        }
+
         if self.type == 'custom':
             if not expr:
                 raise Exception("O calculo de uma expressao customizada exige a expressao a ser avaliada")
@@ -59,6 +104,12 @@ class Regression():
             custom_function, free_variables = custom_interpreter(expr)
 
             function = create_function(custom_function)
+
+            number_params = len(inspect.signature(function).parameters) - 1
+            bounds['custom'] = [
+                ([-np.inf]*number_params,
+                [np.inf]*number_params)
+            ]
 
         else:
             function = functions.get(self.type)
@@ -68,10 +119,45 @@ class Regression():
         
         x_data = np.array(x_values, dtype=np.float64)
         y_data = np.array(y_values, dtype=np.float64)
-        
-        info = curve_fit(function, x_data, y_data, maxfev=maxfev, full_output=True)
-        params = info[0]
-        print(f"Foram necessarias {info[2]['nfev']} iterações para chegar ao resultado")
+
+        relative_error = np.inf
+        r_squared = -np.inf
+        correlation_coefficient = -np.inf
+        rmse = np.inf
+        params = None
+
+        if not bounds.get(self.type):
+            raise Exception(f"Limites não definidos para o ajuste {self.type}")
+
+        for bound in bounds.get(self.type):
+            info = curve_fit(function, x_data, y_data, maxfev=maxfev, full_output=True, bounds=bound)
+            params_tmp = info[0]
+            print(f"Foram necessarias {info[2]['nfev']} iterações para chegar ao resultado")
+
+            #calculando valores de y ajustados
+            y_fit = function(x_data, *params_tmp)
+
+            #calculando erro relativo médio
+            relative_error_tmp = np.mean(np.abs((y_fit - y_data) / y_data))
+
+            #calculando coeficiente de determinação
+            mean_y = np.mean(y_data)
+            total_sum_of_squares = np.sum((y_data - mean_y)**2)
+            sum_of_squared_residuals = np.sum((y_data - y_fit)**2)
+            r_squared_tmp = 1 - (sum_of_squared_residuals / total_sum_of_squares)
+
+            #calculando coeficiente de correlação
+            correlation_coefficient_tmp = np.corrcoef(y_data, y_fit)[0, 1]
+
+            #calculando o erro quadrático médio
+            rmse_tmp = np.sqrt(np.mean((y_data - y_fit) ** 2))
+
+            if r_squared_tmp > r_squared:
+                r_squared = r_squared_tmp
+                relative_error = relative_error_tmp
+                correlation_coefficient = correlation_coefficient_tmp
+                params = params_tmp
+                rmse = rmse_tmp
 
         if self.type == 'custom':
             words = re.findall(r'\b\_?[a-zA-Z]+\d*\b', expr)
@@ -82,25 +168,11 @@ class Regression():
 
         result = list(map(lambda x: np.round(x, aprox),params))
 
-        #calculando valores de y ajustados
-        y_fit = function(x_data, *params)
-
-        #calculando erro relativo médio
-        relative_error = np.mean(np.abs((y_fit - y_data) / y_data))
-
-        #calculando coeficiente de determinação
-        mean_y = np.mean(y_data)
-        total_sum_of_squares = np.sum((y_data - mean_y)**2)
-        sum_of_squared_residuals = np.sum((y_data - y_fit)**2)
-        r_squared = 1 - (sum_of_squared_residuals / total_sum_of_squares)
-
-        #calculando coeficiente de correlação
-        correlation_coefficient = np.corrcoef(y_data, y_fit)[0, 1]
-
         response = {f'coef_{i}': x for i, x in enumerate(result)}
         response['relative_error'] = relative_error
         response['r_squared'] = r_squared
         response['correlation_coefficient'] = correlation_coefficient
+        response['rmse'] = rmse
         if self.type == 'custom':
             response['expression'] = expr_interpretada
 
