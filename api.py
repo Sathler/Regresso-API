@@ -19,6 +19,7 @@ class Payload(BaseModel):
     params: List[float]
     results: List[float]
     aprox: int = None
+    print_aprox: int = None
     expr: str = None
 
 @app.post("/")
@@ -33,6 +34,9 @@ async def regression_api(payload: Payload):
 
     if payload.aprox:
         event['body-json']['aprox'] = payload.aprox
+
+    if payload.print_aprox is not None:
+        event['body-json']['print_aprox'] = payload.print_aprox
 
     if payload.expr:
         event['body-json']['expr'] = payload.expr

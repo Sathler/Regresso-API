@@ -15,6 +15,7 @@ def regression_handler(event, context):
         params = body.get("params")
         results = body.get("results")
         aprox = body.get('aprox', 4)
+        print_aprox = body.get('print_aprox', aprox)
         expr = body.get('expr', 4)
         maxfev = body.get('maxfev', 10000)
 
@@ -49,7 +50,7 @@ def regression_handler(event, context):
 
         return {
             "success": True,
-            "response": reg.regression(params, results, aprox, expr=expr, maxfev=maxfev)
+            "response": reg.regression(params, results, aprox, print_aprox=print_aprox, expr=expr, maxfev=maxfev)
         }
 
     except Exception as error:

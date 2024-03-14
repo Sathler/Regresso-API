@@ -38,7 +38,7 @@ class Regression():
     def n_logaritmic2_function(self, x, a, b):
         return a * x * (np.log2(x) ** 2) + b
     
-    def regression(self, x_values, y_values, aprox = 2, expr = None, maxfev=10000):
+    def regression(self, x_values, y_values, aprox = 2, print_aprox=None, expr = None, maxfev=10000):
         functions = {
             'linear': self.linear_function,
             'quadratic': self.quadratic_function,
@@ -162,7 +162,7 @@ class Regression():
         if self.type == 'custom':
             words = re.findall(r'\b\_?[a-zA-Z]+\d*\b', expr)
 
-            params_variables = {free_variables[i]: f"{params[i]:.{aprox}f}" for i in range(len(params))}
+            params_variables = {free_variables[i]: f"{params[i]:.{print_aprox}f}" for i in range(len(params))}
 
             expr_interpretada = re.sub(r'\b\_?[a-zA-Z]+\d*\b', lambda x: params_variables.get(x.group(0), x.group(0)), expr)
 
