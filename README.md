@@ -127,12 +127,12 @@ dessa maneira a API local será disponibilizada no endereço `http://127.0.0.1:8
 | Tipo de Ajuste        | Equação da Curva                             | Restrição            |
 |-----------------------|----------------------------------------------|----------------------|
 | Linear                | $f(x) = a*x + b$                             | $a >= 0.01$ ou $a <= -0.01$ |
-| Quadrático            | $f(x) = a*x^2 + b*x + c$                     | $a >= 0.01$ ou $a <= -0.01$ |
-| Cúbico                | $f(x) = a*x^3 + b*x^2 + c*x + d$             | $a >= 0.01$ ou $a <= -0.01$ |
+| Quadrático            | $f(x) = a * x^2 + b*x + c$                     | $a >= 0.01$ ou $a <= -0.01$ |
+| Cúbico                | $f(x) = a * x^3 + b * x^2 + c*x + d$             | $a >= 0.01$ ou $a <= -0.01$ |
 | Logarítmico           | $f(x) = a*\log_2(x) + b$                     | $a >= 0.01$ ou $a <= -0.01$ |
-| $N\log_2(N)$          | $f(x) = a*x*\log_2(x) + b$                   | $a >= 0.01$ ou $a <= -0.01$ |
-| $N\log_2(N)^2$        | $f(x) = a*x*\log_2(x)^2 + b$                 | $a >= 0.01$ ou $a <= -0.01$ |
-| $N^2\log_2(N)$        | $f(x) = a*x^2*\log_2(x) + b$                 | $a >= 0.01$ ou $a <= -0.01$ |
+| $N\log_2(N)$          | $f(x) = a * x * \log_2(x) + b$                   | $a >= 0.01$ ou $a <= -0.01$ |
+| $N\log_2(N)^2$        | $f(x) = a * x * \log_2(x)^2 + b$                 | $a >= 0.01$ ou $a <= -0.01$ |
+| $N^2\log_2(N)$        | $f(x) = a * x^2 * \log_2(x) + b$                 | $a >= 0.01$ ou $a <= -0.01$ |
 | Potência              | $f(x) = a*x^b$                               | $b >= 1.1$ ou $b <= 0.9$    |
 
 ### Regressão Personalizada
