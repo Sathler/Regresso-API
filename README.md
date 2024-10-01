@@ -54,14 +54,14 @@ dessa maneira a API local será disponibilizada no endereço `http://127.0.0.1:8
 
 - **type** (`string`): Define a curva a ser ajustada. Pode ser um dos seguintes valores:
   - `linear`: $f(x) = a*x + b$
-  - `quadratic`: $f(x) = a*x^2 + b*x + c$
-  - `cubic`: $f(x) = a*x^3 + b*x^2 + c*x + d$
-  - `exp`: $f(x) = a*b^x$
+  - `quadratic`: $f(x) = a * x^2 + b*x + c$
+  - `cubic`: $f(x) = a * x^3 + b * x^2 + c*x + d$
+  - `exp`: $f(x) = a * b^x$
   - `logaritmic`: $f(x) = a*\log_2(x) + b$
-  - `n_logaritmic`: $f(x) = a*x*\log_2(x) + b$
-  - `n2_logaritmic`: $f(x) = a*x^2*\log_2(x) + b$
-  - `n_logaritmic2`: $f(x) = a*x*\log_2(x)^2 + b$
-  - `ema`: $f(x) = a*b^{x^c}*x^d*\log_2(x)^e + f$
+  - `n_logaritmic`: $f(x) = a * x * \log_2(x) + b$
+  - `n2_logaritmic`: $f(x) = a * x^2 *\log_2(x) + b$
+  - `n_logaritmic2`: $f(x) = a * x * \log_2(x)^2 + b$
+  - `ema`: $f(x) = a * b^{x^c} * x^d *\log_2(x)^e + f$
   - `power`: $f(x) = a*x^b$
   - `custom`: Curva definida pela expressão no parâmetro `expr`
 
